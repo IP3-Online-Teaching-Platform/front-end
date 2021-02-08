@@ -10,7 +10,7 @@ const Login = () => {
   const signInWithEmailAndPasswordHandler = (event, email, password) => {
     event.preventDefault();
     auth.signInWithEmailAndPassword(email, password).catch(error => {
-      setError("Error signing in with password and email!");
+      setError("Invalid email address or password!");
     });
   };
 
@@ -29,7 +29,10 @@ const Login = () => {
     <div>
       <h1>Log In</h1>
       <div>
-        <form className="">
+        {error !== null && (
+          <div>{error}</div>
+        )}
+        <form>
           <label htmlFor="userEmail">
             Email:
           </label>
@@ -57,11 +60,11 @@ const Login = () => {
           </button>
         </form>
         <p>
-          Don't have an account?{" "}
+          Don't have an account?
           <Link to="/signup">
             Sign up here
-          </Link>{" "}
-          <br />{" "}
+          </Link>
+          <br />
           <Link to="/passwordreset">
             Forgot Password?
           </Link>

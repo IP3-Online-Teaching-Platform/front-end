@@ -1,18 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { auth, generateUserDocument } from '../Firebase'
+import { auth } from '../Firebase'
 
 const SignUp = () => {
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState(null);
 
   const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
     event.preventDefault();
     try {
-      const { user } = await auth.createUserWithEmailAndPassword(email, password);
-      generateUserDocument(user, { displayName });
+      await auth.createUserWithEmailAndPassword(email, password);
     }
     catch (error) {
       console.log(error)
@@ -21,74 +20,76 @@ const SignUp = () => {
 
     setEmail("");
     setPassword("");
-    setDisplayName("");
+    setFirstname("");
+    setLastname("");
   };
 
   const onChangeHandler = event => {
     const { name, value } = event.currentTarget;
-    if (name === "userEmail") {
+    if (name === "email") {
       setEmail(value);
-    } else if (name === "userPassword") {
+    } else if (name === "password") {
       setPassword(value);
-    } else if (name === "displayName") {
-      setDisplayName(value);
-    }
+    } else if (name === "fname") {
+      setFirstname(value);
+    } else if (name === "lname") {
+      setLastname(value);
+    };
   };
 
   return (
-    <div>
-      <h1>Sign Up</h1>
-      <div>
-        {error !== null && (
-          <div>
-            {error}
+    <div class="register-container">
+      <div class="main-login-container">
+        <div class="google-facebook-container">
+          <div class="google-facebook">
+            <div class="google-facebook-button">
+              <div class="image-container">
+                <img src="/assets/googlelogo.png" class="google-button-image" alt='' />
+              </div>
+              <a href="/googleregister" class="google-facebook-link">
+                Sign up with Google
+                    </a>
+            </div>
+            <div class="google-facebook-button">
+              <div class="image-container">
+                <img src="/assets/facebooklogo.jpg" class="google-button-image" alt='' />
+              </div>
+              <a href="/facebookregister" class="google-facebook-link">
+                Sign up with Facebook
+                    </a>
+            </div>
           </div>
-        )}
-        <form className="">
-          <label htmlFor="displayName">
-            Display Name:
-          </label>
-          <input
-            type="text"
-            name="displayName"
-            value={displayName}
-            placeholder="E.g: Faruq"
-            id="displayName"
-            onChange={event => onChangeHandler(event)}
-          />
-          <label htmlFor="userEmail">
-            Email:
-          </label>
-          <input
-            type="email"
-            name="userEmail"
-            value={email}
-            placeholder="E.g: faruq123@gmail.com"
-            id="userEmail"
-            onChange={event => onChangeHandler(event)}
-          />
-          <label htmlFor="userPassword">
-            Password:
-          </label>
-          <input
-            type="password"
-            name="userPassword"
-            value={password}
-            placeholder="Your Password"
-            id="userPassword"
-            onChange={event => onChangeHandler(event)}
-          />
-          <button
-            onClick={event => {
-              createUserWithEmailAndPasswordHandler(event, email, password);
-            }}
-          >
-            Sign up
-          </button>
+        </div>
+
+
+        <form class="login-form" action="/dashboard">
+          <p class="login-title">Start learning!</p>
+
+          <label class="form-label" for="fname">First name</label>
+          <input type="text" class="form-input" name="fname" value={firstname} onChange={(event) => onChangeHandler(event)} />
+
+          <label class="form-label" for="lname">Last name</label>
+          <input type="text" class="form-input" name="lname" value={lastname} onChange={(event) => onChangeHandler(event)} />
+
+          <label class="form-label" for="email">Email</label>
+          <input type="email" class="form-input" name="email" value={email} onChange={(event) => onChangeHandler(event)} />
+
+          <label class="form-label" for="password">Password</label>
+          <input type="password" class="form-input" name="password" value={password} onChange={(event) => onChangeHandler(event)} />
+
+          {error !== null && (
+            <div>
+              {error}
+            </div>
+          )}
+
+          <button type="submit" class="login-form-submit-button" onClick={event => {
+            createUserWithEmailAndPasswordHandler(event, email, password);
+          }}>Create account</button>
+
+          <a class="login-form-text" href="/login">Already have an account?</a>
         </form>
-        <p>Already have an account?
-          <Link to="/login">Sign in here</Link>
-        </p>
+
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from 'react-router-dom';
 import { auth } from '../Firebase'
 
 const Login = () => {
@@ -17,58 +16,53 @@ const Login = () => {
   const onChangeHandler = (event) => {
     const { name, value } = event.currentTarget;
 
-    if (name === 'userEmail') {
+    if (name === 'email') {
       setEmail(value);
     }
-    else if (name === 'userPassword') {
+    else if (name === 'password') {
       setPassword(value);
     }
   };
 
   return (
-    <div>
-      <h1>Log In</h1>
-      <div>
-        {error !== null && (
-          <div>{error}</div>
-        )}
-        <form>
-          <label htmlFor="userEmail">
-            Email:
-          </label>
-          <input
-            type="email"
-            name="userEmail"
-            value={email}
-            placeholder="student123@gmail.com"
-            id="userEmail"
-            onChange={(event) => onChangeHandler(event)}
-          />
-          <label htmlFor="userPassword">
-            Password:
-          </label>
-          <input
-            type="password"
-            name="userPassword"
-            value={password}
-            placeholder="Your Password"
-            id="userPassword"
-            onChange={(event) => onChangeHandler(event)}
-          />
-          <button onClick={(event) => { signInWithEmailAndPasswordHandler(event, email, password) }}>
-            Sign in
-          </button>
+    <div class="login-container">
+      <div class="main-login-container">
+        <div class="google-facebook-container">
+          <div class="google-facebook">
+            <div class="google-facebook-button">
+              <div class="image-container">
+                <img src="/assets/googlelogo.png" class="google-button-image" alt='' />
+              </div>
+              <a href="/googlelogin" class="google-facebook-link">
+                Log in with Google
+                            </a>
+            </div>
+            <div class="google-facebook-button">
+              <div class="image-container">
+                <img src="/assets/facebooklogo.jpg" class="google-button-image" alt='' />
+              </div>
+              <a href="/facebooklogin" class="google-facebook-link">
+                Log in with Facebook
+                            </a>
+            </div>
+          </div>
+        </div>
+        <form class="login-form" action="/dashboard">
+          <p class="login-title">Welcome back!</p>
+
+          <label class="form-label" for="email">Email</label>
+          <input type="email" class="form-input" name="email" value={email} onChange={(event) => onChangeHandler(event)} />
+
+          <label class="form-label" for="password">Password</label>
+          <input type="password" class="form-input" name="password" value={password} onChange={(event) => onChangeHandler(event)} />
+
+          <a class="login-form-text" href="/forgotpassword">Forgot your password?</a>
+          {error !== null && (
+            <div>{error}</div>
+          )}
+          <button type="submit" class="login-form-submit-button" onClick={(event) => { signInWithEmailAndPasswordHandler(event, email, password) }}>Log in</button>
+          <a class="login-form-text" href="/register">Don't have an account?</a>
         </form>
-        <p>
-          Don't have an account?
-          <Link to="/signup">
-            Sign up here
-          </Link>
-          <br />
-          <Link to="/passwordreset">
-            Forgot Password?
-          </Link>
-        </p>
       </div>
     </div>
   );

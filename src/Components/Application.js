@@ -1,23 +1,22 @@
 import React, { useContext } from "react";
-import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Login from "./Login/Login";
 import SignUp from "./Login/SignUp";
-import ProfilePage from "./Login/ProfilePage";
+import Dashboard from "./Dashboard/Dashboard";
 import PasswordReset from "./Login/PasswordReset";
 import Home from './Home/Home'
 import { UserContext } from '../Providers/UserProvider'
-import '../App/App.css'
 
 function Application() {
 
   const user = useContext(UserContext);
-
   return (
     user ?
-      <ProfilePage />
+      <Dashboard />
       :
       <BrowserRouter>
-        <nav>
+
+        {/*<nav>
           <ul>
             <li className='signup'><Link to='/signup' className='signup'>Sign Up</Link></li>
             <li><Link to='/login'>Log In</Link></li>
@@ -25,14 +24,14 @@ function Application() {
             <li><Link to='/'>About Us</Link></li>
             <li className='nav-li-float-left'><Link to='/'>E-Learner</Link></li>
           </ul>
-        </nav>
+        </nav>*/}
         <Switch>
 
           <Route exact path="/">
             <Home />
           </Route>
 
-          <Route path="/signup">
+          <Route path="/register">
             <SignUp />
           </Route>
 

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { UserContext } from "../../Providers/UserProvider";
-import { auth } from "../Firebase";
+import { auth } from "../Auth/Firebase";
 
 const Dashboard = () => {
   const user = useContext(UserContext);

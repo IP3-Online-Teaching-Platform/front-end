@@ -1,5 +1,6 @@
+import firebase from "firebase/app";
 import React, { useState } from "react";
-import { auth } from '../Firebase'
+import { auth } from '../Auth/Firebase'
 
 const SignUp = () => {
   const [firstname, setFirstname] = useState("");
@@ -24,6 +25,13 @@ const SignUp = () => {
     setLastname("");
   };
 
+  const createUserWithGoogleHandler = (event) => {
+    event.preventDefault();
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    auth.signInWithPopup(provider);
+  }
+
   const onChangeHandler = event => {
     const { name, value } = event.currentTarget;
     if (name === "email") {
@@ -46,9 +54,7 @@ const SignUp = () => {
               <div class="image-container">
                 <img src="/assets/googlelogo.png" class="google-button-image" alt='' />
               </div>
-              <a href="/googleregister" class="google-facebook-link">
-                Sign up with Google
-                    </a>
+              <button type="submit" class="google-facebook-link" onClick={(event) => { createUserWithGoogleHandler(event) }}>Sign up with Google</button>
             </div>
             <div class="google-facebook-button">
               <div class="image-container">

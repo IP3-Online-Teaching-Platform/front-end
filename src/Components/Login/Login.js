@@ -1,5 +1,6 @@
+import firebase from "firebase/app";
 import React, { useState } from "react";
-import { auth } from '../Firebase'
+import { auth } from '../Auth/Firebase'
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +13,13 @@ const Login = () => {
       setError("Invalid email address or password!");
     });
   };
+
+  const signInWithGoogleHandler = (event) => {
+    event.preventDefault();
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    auth.signInWithPopup(provider);
+  }
 
   const onChangeHandler = (event) => {
     const { name, value } = event.currentTarget;
@@ -26,6 +34,7 @@ const Login = () => {
 
   return (
     <div class="login-container">
+      <script src="https://apis.google.com/js/platform.js" async defer></script>
       <div class="main-login-container">
         <div class="google-facebook-container">
           <div class="google-facebook">
@@ -33,9 +42,7 @@ const Login = () => {
               <div class="image-container">
                 <img src="/assets/googlelogo.png" class="google-button-image" alt='' />
               </div>
-              <a href="/googlelogin" class="google-facebook-link">
-                Log in with Google
-                            </a>
+              <button type="submit" class="google-facebook-link" onClick={(event) => { signInWithGoogleHandler(event) }}>Log in with Google</button>
             </div>
             <div class="google-facebook-button">
               <div class="image-container">
@@ -63,6 +70,7 @@ const Login = () => {
           <button type="submit" class="login-form-submit-button" onClick={(event) => { signInWithEmailAndPasswordHandler(event, email, password) }}>Log in</button>
           <a class="login-form-text" href="/register">Don't have an account?</a>
         </form>
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import React, { useState } from "react";
-import { auth } from '../Auth/Firebase'
+import { auth } from '../Auth/Firebase';
+import fetch from 'node-fetch';
 
 const SignUp = () => {
   const [firstname, setFirstname] = useState("");
@@ -16,8 +17,10 @@ const SignUp = () => {
     }
     catch (error) {
       console.log(error)
-      setError('Error Signing up with email and password');
+      setError('Error signing up with email and password');
     }
+
+    console.log(auth.currentUser)
 
     setEmail("");
     setPassword("");
@@ -25,12 +28,39 @@ const SignUp = () => {
     setLastname("");
   };
 
-  const createUserWithGoogleHandler = (event) => {
+  const createUserWithGoogleHandler = async (event) => {
     event.preventDefault();
     const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-    auth.signInWithPopup(provider);
+    provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+    let userdata = await auth.signInWithPopup(provider);
+
+    const newUserData = {
+      uid: auth.currentUser.uid,
+      email: userdata.user.email,
+      username: userdata.user.email,
+      active: true,
+      first_name: userdata.additionalUserInfo.profile.given_name,
+      last_name: userdata.additionalUserInfo.profile.family_name,
+    }
+    console.log(auth.currentUser.getIdToken())
+    console.log(auth.currentUser.getIdTokenResult())
+    //This is commented out pending response in discord from Javi
+    //postNewUser(newUserData)
   }
+
+  const postNewUser = async (postBody) => {
+    const authtoken = await auth.currentUser.getIdTokenResult()
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'authorization': authtoken.token },
+      body: JSON.stringify({
+        postBody
+      })
+    };
+    const response = await fetch('https://develop-dot-ip3-online-teaching-platform.appspot.com/student/post', options);
+    const data = await response.json();
+    console.log(data)
+  };
 
   const onChangeHandler = event => {
     const { name, value } = event.currentTarget;

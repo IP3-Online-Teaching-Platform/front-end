@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import React, { useState } from "react";
-import { auth } from '../Auth/Firebase';
-import fetch from 'node-fetch';
+import { auth } from '../Auth/Firebase-Auth';
+import { postNewUser, getUser } from '../Auth/API'
 
 const SignUp = () => {
   const [firstname, setFirstname] = useState("");
@@ -12,16 +12,24 @@ const SignUp = () => {
 
   const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
     event.preventDefault();
-    try {
-      await auth.createUserWithEmailAndPassword(email, password);
-    }
-    catch (error) {
-      console.log(error)
-      setError('Error signing up with email and password');
-    }
+    await auth.createUserWithEmailAndPassword(email, password)
+      .then(async () => {
+        auth.currentUser.updateProfile({ displayName: `${firstname} ${lastname}` });
+        const success = await postNewUser({ uid: auth.currentUser.uid, email: email, username: email.split('@')[0], active: true, first_name: firstname, last_name: lastname }, event)
+          .catch(err => console.log(err))
+        if (success) {
+          auth.currentUser.api = await getUser();
+          if (auth.currentUser.api) {
+            window.location.replace("/");
+          }
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        setError('Error signing up with email and password');
+      })
 
-    console.log(auth.currentUser)
-
+    setError(null);
     setEmail("");
     setPassword("");
     setFirstname("");
@@ -43,22 +51,18 @@ const SignUp = () => {
       last_name: userdata.additionalUserInfo.profile.family_name,
     }
 
-    postNewUser(newUserData)
+    const success = await postNewUser(newUserData, event)
+      .catch(err => console.log(err))
+    if (success) {
+      auth.currentUser.api = await getUser();
+      if (auth.currentUser.api) {
+        window.location.replace("/");
+      } else {
+        console.log('error on sign up with google /get')
+      }
+    }
+    window.location.replace("/");
   }
-
-  const postNewUser = async (postBody) => {
-    const body = JSON.stringify(postBody)
-    auth.currentUser.getIdToken(true).then(async (authtoken) => {
-      const options = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': authtoken },
-        body: body
-      };
-      const response = await fetch('https://develop-dot-ip3-online-teaching-platform.appspot.com/student/post', options);
-      const data = await response.json();
-      console.log(data)
-    }).catch(err => console.log(err));
-  };
 
   const onChangeHandler = event => {
     const { name, value } = event.currentTarget;

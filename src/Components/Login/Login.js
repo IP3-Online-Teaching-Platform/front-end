@@ -1,8 +1,13 @@
 import firebase from "firebase/app";
 import React, { useState } from "react";
-import { auth } from '../Auth/Firebase'
+import { auth } from '../Auth/Firebase-Auth'
 
 const Login = () => {
+  
+  if (auth.currentUser) {
+    window.location.replace("/");
+  }
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -17,7 +22,7 @@ const Login = () => {
   const signInWithGoogleHandler = (event) => {
     event.preventDefault();
     const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
     auth.signInWithPopup(provider);
   }
 

@@ -1,17 +1,22 @@
 import React, { useContext } from "react";
 import { UserContext } from "../../Providers/UserProvider";
-import { auth } from "../Auth/Firebase";
+import { auth } from "../Auth/Firebase-Auth";
 
 const Dashboard = () => {
   const user = useContext(UserContext);
-  const { email } = user;
+  let displayName = user.email
+  if (auth.currentUser.displayName) {
+    displayName = auth.currentUser.displayName
+  } else {
+    displayName = `${auth.currentUser.api.first_name} ${auth.currentUser.api.last_name}`
+    auth.currentUser.updateProfile({ displayName: `${auth.currentUser.api.first_name} ${auth.currentUser.api.last_name}` })
+  }
   return (
     <div>
-
       <div class="sidenav">
         <div id="dropdownToggle" class="profile-dropdown noselect">
           <div class="profile-picture"></div>
-          <div>{email}<i class="fa fa-caret-down profiledown-icon"></i></div>
+          <div>{displayName}<i class="fa fa-caret-down profiledown-icon"></i></div>
           <div id="profileDropdown" class="profile-dropdown-cont">
             <a href="/settings">Settings</a>
             <a href="/logout">Log out</a>

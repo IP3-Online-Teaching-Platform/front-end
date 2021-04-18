@@ -1,5 +1,5 @@
 import React, { Component, createContext } from "react";
-import { auth } from "../Components/Auth/Firebase";
+import { auth } from "../Components/Auth/Firebase-Auth";
 
 export const UserContext = createContext({ user: null });
 
@@ -9,8 +9,8 @@ class UserProvider extends Component {
     };
 
     componentDidMount = async () => {
-        auth.onAuthStateChanged(async userAuth => {
-            const user = userAuth;
+        auth.onAuthStateChanged(async (userAuth) => {
+            const user = userAuth
             this.setState({ user });
         });
     };

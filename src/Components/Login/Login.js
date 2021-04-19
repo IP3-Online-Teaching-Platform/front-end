@@ -38,44 +38,44 @@ const Login = () => {
   };
 
   return (
-    <div class="login-container">
+    <div className="login-container">
       <script src="https://apis.google.com/js/platform.js" async defer></script>
-      <div class="main-login-container">
-        <div class="google-facebook-container">
-          <div class="google-facebook">
-            <div class="google-facebook-button">
-              <div class="image-container">
-                <img src="/assets/googlelogo.png" class="google-button-image" alt='' />
+      <div className="main-login-container">
+        <div className="google-facebook-container">
+          <div className="google-facebook">
+            <div className="google-facebook-button">
+              <div className="image-container">
+                <img src="/assets/googlelogo.png" className="google-button-image" alt='' />
               </div>
-              <button type="submit" class="google-facebook-link" onClick={(event) => { signInWithGoogleHandler(event) }}>Log in with Google</button>
+              <button type="submit" className="google-facebook-link" onClick={(event) => { signInWithGoogleHandler(event) }}>Log in with Google</button>
             </div>
-            <div class="google-facebook-button">
-              <div class="image-container">
-                <img src="/assets/facebooklogo.jpg" class="google-button-image" alt='' />
+            <div className="google-facebook-button">
+              <div className="image-container">
+                <img src="/assets/facebooklogo.jpg" className="google-button-image" alt='' />
               </div>
-              <a href="/facebooklogin" class="google-facebook-link">
+              <a href="/facebooklogin" className="google-facebook-link">
                 Log in with Facebook
                             </a>
             </div>
           </div>
         </div>
-        <form class="login-form" action="/dashboard">
-          <p class="login-title">Welcome back!</p>
+        <form className="login-form" action="/dashboard">
+          <p className="login-title">Welcome back!</p>
 
-          <label class="form-label" for="email">Email</label>
-          <input type="email" class="form-input" name="email" value={email} onChange={(event) => onChangeHandler(event)} />
+          <label className="form-label" htmlFor="email">Email</label>
+          <input type="email" className="form-input" name="email" value={email} onChange={(event) => onChangeHandler(event)} />
 
-          <label class="form-label" for="password">Password</label>
-          <input type="password" class="form-input" name="password" value={password} onChange={(event) => onChangeHandler(event)} />
+          <label className="form-label" htmlFor="password">Password</label>
+          <input type="password" className="form-input" name="password" value={password} onChange={(event) => onChangeHandler(event)} />
 
-          <a class="login-form-text" href="/forgotpassword">Forgot your password?</a>
+          <a className="login-form-text" href="/forgotpassword">Forgot your password?</a>
           {error !== null && (
             <div>{error}</div>
           )}
-          <button type="submit" class="login-form-submit-button" onClick={(event) => { signInWithEmailAndPasswordHandler(event, email, password) }}>Log in</button>
-          <a class="login-form-text" href="/register">Don't have an account?</a>
+          <button type="submit" className="login-form-submit-button" onClick={(event) => { signInWithEmailAndPasswordHandler(event, email, password) }}>Log in</button>
+          <a className="login-form-text" href="/register">Don't have an account?</a>
         </form>
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <div className="g-signin2" data-onsuccess="onSignIn"></div>
       </div>
     </div>
   );

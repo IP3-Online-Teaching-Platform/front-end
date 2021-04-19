@@ -4,6 +4,7 @@ import { auth } from '../Auth/Firebase-Auth'
 
 const PasswordReset = () => {
   const [email, setEmail] = useState("");
+  const [emailHasBeenSent, setEmailHasBeenSent] = useState(false);
   const [error, setError] = useState(null);
 
   const onChangeHandler = event => {
@@ -17,6 +18,10 @@ const PasswordReset = () => {
     event.preventDefault();
     auth
       .sendPasswordResetEmail(email)
+      .then(() => {
+        setEmailHasBeenSent(true);
+        setTimeout(() => { setEmailHasBeenSent(false) }, 3000);
+      })
       .catch(() => {
         setError("Error resetting password");
       });

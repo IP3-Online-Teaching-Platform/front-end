@@ -12,7 +12,16 @@ function Application() {
   const user = useContext(UserContext);
   return (
     user ?
-      <Dashboard />
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/">
+            <Dashboard />
+          </Route>
+          <Route exact path="/chat">
+            <Dashboard />
+          </Route>
+        </Switch>
+      </BrowserRouter>
       :
       <BrowserRouter>
 

@@ -14,11 +14,11 @@ const Home = () => {
                         <h2 className="landing-text">Try it out. It's free.</h2>
                         <div className="login-register-container">
                             <div className="landing-register-button">
-                                <a href="/register">Start learning</a>
+                                <a href="/studentsignup">Start learning</a>
                             </div>
                         </div>
                         <div className="teacher-text-container">
-                            <a className="teacher-question-text" href="/tutorregister">Are you a tutor? Click here.</a>
+                            <a className="teacher-question-text" href="/tutorsignup">Are you a tutor? Click here.</a>
                         </div>
                     </div>
                     <div className="hero-logo">

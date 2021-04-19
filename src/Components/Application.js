@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Login from "./Login/Login";
-import SignUp from "./Login/SignUp";
+import StudentSignUp from "./Login/StudentSignUp";
+import TutorSignUp from "./Login/TutorSignUp";
 import Dashboard from "./Dashboard/Dashboard";
 import PasswordReset from "./Login/PasswordReset";
 import Home from './Home/Home'
@@ -10,22 +11,11 @@ import { UserContext } from '../Providers/UserProvider'
 function Application() {
 
   const user = useContext(UserContext);
-  return (
-    user ?
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/">
-            <Dashboard />
-          </Route>
-          <Route exact path="/chat">
-            <Dashboard />
-          </Route>
-        </Switch>
-      </BrowserRouter>
-      :
-      <BrowserRouter>
 
-        {/*<nav>
+  return (
+    <BrowserRouter>
+
+      {/*<nav>
           <ul>
             <li className='signup'><Link to='/signup' className='signup'>Sign Up</Link></li>
             <li><Link to='/login'>Log In</Link></li>
@@ -34,26 +24,34 @@ function Application() {
             <li className='nav-li-float-left'><Link to='/'>E-Learner</Link></li>
           </ul>
         </nav>*/}
-        <Switch>
+      <Switch>
 
-          <Route exact path="/">
-            <Home />
-          </Route>
+        <Route exact path="/">
+          {user ? <Redirect to="/dashboard" /> : <Home />}
+        </Route>
 
-          <Route path="/register">
-            <SignUp />
-          </Route>
+        <Route path="/studentsignup">
+          {user ? <Redirect to="/dashboard" /> : <StudentSignUp />}
+        </Route>
 
-          <Route path="/passwordreset">
-            <PasswordReset />
-          </Route>
+        <Route path="/tutorsignup">
+          {user ? <Redirect to="/dashboard" /> : <TutorSignUp />}
+        </Route>
 
-          <Route path="/login">
-            <Login />
-          </Route>
+        <Route path="/passwordreset">
+          {user ? <Redirect to="/dashboard" /> : <PasswordReset />}
+        </Route>
 
-        </Switch>
-      </BrowserRouter>
+        <Route path="/login">
+          {user ? <Redirect to="/dashboard" /> : <Login />}
+        </Route>
+
+        <Route path="/dashboard">
+          {user ? <Dashboard /> : <Redirect to="/"/>}
+        </Route>
+
+      </Switch>
+    </BrowserRouter>
 
   );
 }

@@ -162,9 +162,11 @@ body {
   align-items: flex-start;
   width: 100%;
   background-image: url(/assets/background2.png);
-  background-size: contain;
+  background-position: center;
   background-repeat: no-repeat;
+  background-size: cover;
   height: 1080px;
+  overflow: hidden;
 }
 
 .hero-logo {

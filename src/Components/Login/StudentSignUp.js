@@ -1,9 +1,9 @@
 import firebase from "firebase/app";
 import React, { useState } from "react";
 import { auth } from '../Auth/Firebase-Auth';
-import { postNewUser, getUser } from '../Auth/API'
+import { postNewStudent, getStudent } from '../Auth/API'
 
-const SignUp = () => {
+const StudentSignUp = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -15,10 +15,10 @@ const SignUp = () => {
     await auth.createUserWithEmailAndPassword(email, password)
       .then(async () => {
         auth.currentUser.updateProfile({ displayName: `${firstname} ${lastname}` });
-        const success = await postNewUser({ uid: auth.currentUser.uid, email: email, username: email.split('@')[0], active: true, first_name: firstname, last_name: lastname }, event)
+        const success = await postNewStudent({ uid: auth.currentUser.uid, email: email, username: email.split('@')[0], active: true, first_name: firstname, last_name: lastname }, event)
           .catch(err => console.log(err))
         if (success) {
-          auth.currentUser.api = await getUser();
+          auth.currentUser.api = await getStudent();
           if (auth.currentUser.api) {
             window.location.replace("/");
           }
@@ -51,10 +51,10 @@ const SignUp = () => {
       last_name: userdata.additionalUserInfo.profile.family_name,
     }
 
-    const success = await postNewUser(newUserData, event)
+    const success = await postNewStudent(newUserData, event)
       .catch(err => console.log(err))
     if (success) {
-      auth.currentUser.api = await getUser();
+      auth.currentUser.api = await getStudent();
       if (auth.currentUser.api) {
         window.location.replace("/");
       } else {
@@ -132,4 +132,4 @@ const SignUp = () => {
     </div>
   );
 };
-export default SignUp;
+export default StudentSignUp;

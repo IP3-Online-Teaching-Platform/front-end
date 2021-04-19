@@ -1,6 +1,6 @@
 import React from "react";
 import { auth } from "../Auth/Firebase-Auth";
-import SidebarNav from './SidebarNav'
+import SidebarNav from './SidebarNav';
 
 const Dashboard = () => {
 

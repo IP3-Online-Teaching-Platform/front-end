@@ -552,7 +552,7 @@ body {
 }
 
 .sidenav {
-  height: 100%;
+  height: 70px;
   display: flex;
   flex-direction: column;
   width: 250px;
@@ -624,7 +624,7 @@ body {
   background-color: #e2e2f0;
 }
 
-.sidenav-li-item a{
+.sidenav-li-item {
   display: block;
   width: 100%;
   height: 100%;
@@ -699,6 +699,21 @@ body {
   padding-right: 5px;
   margin-bottom: 5px;
   padding-bottom: 2px;
+}
+
+.sidebarnav-page {
+  display: flex;
+  height: 100%;
+  width: 100%
+}
+
+.sidenav-areabit {
+  flex: 0.1;
+}
+
+.sidenav-main-display {
+  flex: 1;
+  text-align: center;
 }
 
 .dashboard-body {

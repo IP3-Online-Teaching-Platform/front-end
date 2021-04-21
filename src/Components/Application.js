@@ -25,8 +25,7 @@ function Application() {
           </ul>
         </nav>*/}
       <Switch>
-
-        <Route exact path="/">
+      <Route exact path="/">
           {user ? <Redirect to="/dashboard" /> : <Home />}
         </Route>
 

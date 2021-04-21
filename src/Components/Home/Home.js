@@ -4,6 +4,22 @@ const Home = () => {
 
     return (
         <div>
+            <div className="header">
+                <div className="header-logo-container">
+                    <div className="header-logo">
+                    </div>
+                    <a href="/" className="header-text">ConnectedTutor</a>
+                </div>
+
+                <div className="header-navigation">
+                    <div className="header-nav-item">
+                        <a href="/login">Log in</a>
+                    </div>
+                    <div className="header-nav-item">
+                        <a href="/studentsignup">Register</a>
+                    </div>
+                </div>
+            </div>
             <div className="hero">
                 <div className="hero-container">
                     <div className="landing-text-container">

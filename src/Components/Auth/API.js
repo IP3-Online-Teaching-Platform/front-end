@@ -24,17 +24,57 @@ export const postNewTutor = (userdata, event) => {
 }
 
 export const getStudent = async () => {
-    const userData = await getStudentAPI()
-        .catch(err => console.log(err));
-    console.log(`Get Student Data Response: ${JSON.parse(userData)}`);
-    auth.currentUser.api = userData;
+    return new Promise(async (resolve) => {
+        const userData = await getStudentAPI()
+            .catch(err => { return resolve(false); });
+        try {
+            JSON.parse(userData);
+        } catch (err) {
+            return resolve(false);
+        }
+        return resolve(userData);
+    })
 }
 
-export const getTutor = async () => {
-    const userData = await getTutorAPI()
-        .catch(err => console.log(err));
-    console.log(`Get Tutor Data Response: ${JSON.parse(userData)}`);
-    auth.currentUser.api = userData;
+export const getTutor = () => {
+    return new Promise(async (resolve) => {
+        const userData = await getTutorAPI()
+            .catch(err => { return resolve(false); });
+        try {
+            JSON.parse(userData);
+        } catch (err) {
+            return resolve(false);
+        }
+        return resolve(userData);
+    })
+}
+
+export const searchTutors = (ids) => {
+    return new Promise(async (resolve) => {
+
+        //Try check if they are tutors first
+        let tutors = await getSearchTutorAPI(ids)
+            .catch(err => { console.log(err); return resolve(false); })
+        try {
+            tutors = JSON.parse(tutors);
+        } catch (err) {
+            console.log(err);
+            return resolve(false);
+        }
+
+        //If no tutors found try check if there are students with the uid searched
+        if (tutors.length === 0) {
+            tutors = await getSearchStudentAPI(ids)
+                .catch(err => { console.log(err); return resolve(false); })
+            try {
+                tutors = JSON.parse(tutors)
+            } catch (err) {
+                console.log(err);
+                return resolve(false);
+            }
+        }
+        return resolve(tutors);
+    })
 }
 
 async function postNewStudentAPI(userdata) {
@@ -161,5 +201,73 @@ async function getTutorAPI() {
                 return resolve(responsedata);
             })
         });
+    });
+}
+
+async function getSearchTutorAPI(ids) {
+    return new Promise(async (resolve, reject) => {
+        let responsedata = '';
+        let body = JSON.stringify({ ids: ids, role: 'professor' });
+        //Get firebase data
+        const authtoken = await auth.currentUser.getIdToken(true)
+            .catch(err => { return reject(err) });
+
+        //GET options
+        const options = {
+            host: 'develop-dot-ip3-online-teaching-platform.appspot.com',
+            path: `/search/all`,
+            method: 'POST',
+            headers: {
+                'Authorization': authtoken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        };
+
+        //Make API call
+        const req = https.request(options, (res) => {
+            res.on('data', (d) => {
+                responsedata += d;
+            });
+            res.on('end', () => {
+                return resolve(responsedata);
+            });
+        });
+        req.write(body);
+        req.end();
+    });
+}
+
+async function getSearchStudentAPI(ids) {
+    return new Promise(async (resolve, reject) => {
+        let responsedata = '';
+        let body = JSON.stringify({ ids: ids, role: 'student' });
+        //Get firebase data
+        const authtoken = await auth.currentUser.getIdToken(true)
+            .catch(err => { return reject(err) });
+
+        //GET options
+        const options = {
+            host: 'develop-dot-ip3-online-teaching-platform.appspot.com',
+            path: `/search/all`,
+            method: 'POST',
+            headers: {
+                'Authorization': authtoken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json; charset=UTF-8'
+            }
+        };
+
+        //Make API call
+        const req = https.request(options, (res) => {
+            res.on('data', (d) => {
+                responsedata += d;
+            });
+            res.on('end', () => {
+                return resolve(responsedata);
+            });
+        });
+        req.write(body);
+        req.end();
     });
 }

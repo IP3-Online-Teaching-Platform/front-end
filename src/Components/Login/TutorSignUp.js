@@ -51,17 +51,11 @@ const TutorSignUp = () => {
             last_name: userdata.additionalUserInfo.profile.family_name,
         }
 
-        const success = await postNewTutor(newUserData, event)
-            .catch(err => console.log(err))
-        if (success) {
-            auth.currentUser.api = await getTutor();
-            if (auth.currentUser.api) {
+        postNewTutor(newUserData, event)
+            .then(() => {
                 window.location.replace("/");
-            } else {
-                console.log('error on sign up with google /get')
-            }
-        }
-        window.location.replace("/");
+            })
+            .catch(err => console.log(err))
     }
 
     const onChangeHandler = event => {
@@ -87,14 +81,6 @@ const TutorSignUp = () => {
                                 <img src="/assets/googlelogo.png" className="google-button-image" alt='' />
                             </div>
                             <button type="submit" className="google-facebook-link" onClick={(event) => { createUserWithGoogleHandler(event) }}>Sign up with Google</button>
-                        </div>
-                        <div className="google-facebook-button">
-                            <div className="image-container">
-                                <img src="/assets/facebooklogo.jpg" className="google-button-image" alt='' />
-                            </div>
-                            <a href="/facebookregister" className="google-facebook-link">
-                                Sign up with Facebook
-                    </a>
                         </div>
                     </div>
                 </div>

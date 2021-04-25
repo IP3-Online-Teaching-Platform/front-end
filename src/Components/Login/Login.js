@@ -1,12 +1,8 @@
 import firebase from "firebase/app";
 import React, { useState } from "react";
-import { auth } from '../Auth/Firebase-Auth'
+import { auth } from '../Auth/Firebase-Auth';
 
 const Login = () => {
-  
-  if (auth.currentUser) {
-    window.location.replace("/");
-  }
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,14 +44,6 @@ const Login = () => {
                 <img src="/assets/googlelogo.png" className="google-button-image" alt='' />
               </div>
               <button type="submit" className="google-facebook-link" onClick={(event) => { signInWithGoogleHandler(event) }}>Log in with Google</button>
-            </div>
-            <div className="google-facebook-button">
-              <div className="image-container">
-                <img src="/assets/facebooklogo.jpg" className="google-button-image" alt='' />
-              </div>
-              <a href="/facebooklogin" className="google-facebook-link">
-                Log in with Facebook
-                            </a>
             </div>
           </div>
         </div>

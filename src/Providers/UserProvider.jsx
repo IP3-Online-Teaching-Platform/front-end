@@ -8,7 +8,7 @@ class UserProvider extends Component {
         user: null
     };
 
-    componentWillMount = async () => {
+    componentDidMount = async () => {
         this.unsubscribe = auth.onAuthStateChanged(userAuth => {
             const user = userAuth
             this.setState({ user });

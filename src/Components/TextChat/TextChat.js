@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { auth, db } from '../Auth/Firebase-Auth';
 import moment from 'moment';
+import { searchTutors } from '../Auth/API'
 
 const TextChat = () => {
     const [chatsMap, setChatsMap] = useState(undefined);
@@ -8,7 +9,8 @@ const TextChat = () => {
     const [msgcontent, setMsgContent] = useState('');
     const [loading, setLoading] = useState(true);
     const [userToMessage, setUserToMessage] = useState('');
-    const [conversationNames, setConvoNames] = useState([]);
+    const [usernameToMessage, setUsernameToMessage] = useState('');
+    const [sortedChats, setSortedChats] = useState([]);
 
     const handleSendMessage = async (event) => {
         event.preventDefault();
@@ -18,6 +20,16 @@ const TextChat = () => {
         }
 
         let sortedUsers = [auth.currentUser.uid, userToMessage].sort()
+        let sortedUsernames = []
+        if (sortedUsers[0] === auth.currentUser.uid) {
+            sortedUsernames.push(auth.currentUser.displayName);
+            sortedUsernames.push(usernameToMessage);
+        } else {
+            sortedUsernames.push(usernameToMessage);
+            sortedUsernames.push(auth.currentUser.displayName);
+        }
+        console.log(sortedUsernames, sortedUsers);
+
         let docname = sortedUsers.join('|');
 
         const docRef = db.collection('conversations').doc(docname);
@@ -32,6 +44,7 @@ const TextChat = () => {
                     author: auth.currentUser.uid
                 },
                 users: sortedUsers,
+                usernames: sortedUsernames,
                 created: docData.created
             }
         )
@@ -53,32 +66,60 @@ const TextChat = () => {
             const chats = await convosRef.where('users', 'array-contains', auth.currentUser.uid).get();
 
             let allChats = []
-            let allConvoNames = []
+
             chats.forEach(chat => {
                 let chatdata = chat.data();
                 allChats.push(chatdata);
-                allConvoNames.push(`${chatdata.users[0]}|${chatdata.users[1]}`);
             })
+
+            for (let chat of allChats) {
+                let authorDetails = await searchTutors([chat.users[0] === auth.currentUser.uid ? chat.users[1] : chat.users[0]]);
+                chat.othername = `${authorDetails[0] ? authorDetails[0].first_name : 'Firstname PlaceHolder'} ${authorDetails[0] ? authorDetails[0].last_name : 'Surname Placeholder'}`;
+            }
+
+            let allSortedChats = allChats.sort((a, b) => {
+                return a.recentMessage.timestamp - b.recentMessage.timestamp;
+            })
+
+            setSortedChats(allSortedChats);
 
             const chatsMap = (
                 <div>
                     {allChats.map(chat => (
-                        <div className="chat-contact" onClick={() => { getRealTimeMessages(chat.users[0] === auth.currentUser.uid ? chat.users[1] : chat.users[0]) }}>
-                            <div className='chat-contact-name'>{chat.users[0] === auth.currentUser.uid ? chat.users[1] : chat.users[0]}</div>
-                            <div className='chat-contact-preview'>{chat.recentMessage.content.substring(0, 15) + "..."}</div>
+                        <div className="chat-contact" onClick={(event) => { getRealTimeMessages(event, chat.users[0] === auth.currentUser.uid ? chat.users[1] : chat.users[0], chat.othername) }}>
+                            <div className='chat-contact-name'>{chat.othername}</div>
+                            <div className='chat-contact-preview'>{chat.recentMessage.length > 25 ? chat.recentMessage.content.substring(0, 25) + "..." : chat.recentMessage.content}</div>
                         </div>
                     ))}
                 </div>
             )
             setChatsMap(chatsMap);
-            setConvoNames(allConvoNames);
+            if (sortedChats.length >= 1) {
+                let userid = undefined;
+                let username = undefined;
+                if (sortedChats[0].users[1] === auth.currentUser.uid) {
+                    userid = sortedChats[0].users[0]
+                    username = sortedChats[0].usernames[0]
+                } else {
+                    userid = sortedChats[0].users[1]
+                    username = sortedChats[0].usernames[1]
+                }
+                getRealTimeMessages(undefined, userid, username);
+            }
             resolve(true);
         })
     }
 
-    const getRealTimeMessages = (uid) => {
-        let userToMessage = uid
+    const getRealTimeMessages = (event, uid, uname) => {
+        if (event) {
+            event.preventDefault();
+        }
+
+        let userToMessage = uid;
         setUserToMessage(userToMessage);
+        let usernameToMessage = uname;
+        setUsernameToMessage(uname);
+
         const messageContainer = document.getElementById('chat-message-container');
         db.collection('conversations').doc([auth.currentUser.uid, userToMessage].sort().join('|')).collection('messages')
             .onSnapshot(snapshot => {
@@ -89,13 +130,13 @@ const TextChat = () => {
                 const messageDisplay = (
                     <>
                         <div className="chat-title">
-                            <div className="chat-title-name">{userToMessage}</div>
+                            <div className="chat-title-name">{usernameToMessage}</div>
                         </div>
                         <div className="main-chat" id="chat-message-container">
                             {messages.map(message => (
                                 <div className={message.author === auth.currentUser.uid ? 'message-one' : 'message-two'}>
                                     <div className={message.author === auth.currentUser.uid ? 'chat-name-picture' : 'chat-name-picture2'}>
-                                        <div className="chat-name">{message.author === auth.currentUser.uid ? 'You' : userToMessage}</div>
+                                        <div className="chat-name">{message.author === auth.currentUser.uid ? 'You' : usernameToMessage}</div>
                                         <div className="chat-timestamp">{moment(message.timestamp).format('HH:mm')}</div>
                                     </div>
                                     <div className={message.author === auth.currentUser.uid ? 'message-text-container' : 'message-text-container2'}>
@@ -109,47 +150,11 @@ const TextChat = () => {
                     </>
                 )
                 setMessages(messageDisplay);
-                if(messageContainer){
+                if (messageContainer) {
                     messageContainer.scrollTop = messageContainer.scrollHeight;
                 }
             });
     }
-
-    // const handleLoadMessages = async (uid) => {
-    //     let userToMessage = uid
-    //     setUserToMessage(userToMessage);
-    //     const convoRef = db.collection('conversations').doc([auth.currentUser.uid, userToMessage].sort().join('|')).collection('messages');
-    //     const messagesRef = await convoRef.get();
-    //     let messages = []
-    //     messagesRef.forEach(message => {
-    //         messages.push(message.data());
-    //     })
-    //     messages.sort((a, b) => {
-    //         return a.timestamp - b.timestamp;
-    //     });
-
-    //     const messageDisplay = (
-    //         <div className="main-chat">
-    //             <div className="chat-title">
-    //                 <div className="chat-title-name">{userToMessage}</div>
-    //             </div>
-    //             {messages.map(message => (
-    //                 <div className={message.author === auth.currentUser.uid ? 'message-one' : 'message-two'}>
-    //                     <div className={message.author === auth.currentUser.uid ? 'chat-name-picture' : 'chat-name-picture2'}>
-    //                         <div className="chat-name">{message.author === auth.currentUser.uid ? 'You' : userToMessage}</div>
-    //                         <div className="chat-timestamp">{moment(message.timestamp).format('HH:mm')}</div>
-    //                     </div>
-    //                     <div className={message.author === auth.currentUser.uid ? 'message-text-container' : 'message-text-container2'}>
-    //                         <div className={message.author === auth.currentUser.uid ? 'message-text' : 'message-text2'}>
-    //                             {message.content}
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //             ))}
-    //         </div>
-    //     )
-    //     setMessages(messageDisplay);
-    // }
 
     if (loading) {
         getConversations().then(success => {
@@ -168,21 +173,26 @@ const TextChat = () => {
 
     return (
         <div className="tutors-container">
+            <div className="chat-list-container">
+                <div className="chat-list-title">
+                    <div className="chat-title-name">Chats</div>
+                </div>
+                <div className="chat-list-main">
+                    {chatsMap ? chatsMap : ''}
+                </div>
+            </div>
             <div className="chat-container">
                 {messages ? messages : ''}
                 <div className="chat-typing">
-                    <input type="text" className="chat-input" name="msgcontent" value={msgcontent} onChange={(event) => onChangeHandler(event)} />
-                    <div className="class-buttons-container">
+                    <textarea type="text" className="chat-input" name="msgcontent" placeholder={`Message ${usernameToMessage.split(' ')[0]}`} value={msgcontent} onChange={(event) => onChangeHandler(event)} />
+                    <div className="chat-buttons-container">
+                        <div className="chat-buttons">
+                        </div>
                         <div className="chat-attachments">
+                            <i className="fas fa-phone sidenav-list-icon" onClick={() => window.open('https://connectedtutorvideochat.herokuapp.com/')}></i>
                             <i className="fas fa-paper-plane input-send" onClick={(event) => { handleSendMessage(event) }}></i>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div className="tutors-details-container-main">
-
-                <div className="chat-list">
-                    {chatsMap ? chatsMap : ''}
                 </div>
             </div>
         </div>

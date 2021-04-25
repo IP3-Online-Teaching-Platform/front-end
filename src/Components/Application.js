@@ -7,6 +7,7 @@ import Dashboard from "./Dashboard/Dashboard";
 import PasswordReset from "./Login/PasswordReset";
 import Home from './Home/Home'
 import { UserContext } from '../Providers/UserProvider'
+import MakePayment from './Payment/MakePayment'
 
 function Application() {
 
@@ -25,7 +26,7 @@ function Application() {
           </ul>
         </nav>*/}
       <Switch>
-      <Route exact path="/">
+        <Route exact path="/">
           {user ? <Redirect to="/dashboard" /> : <Home />}
         </Route>
 
@@ -46,7 +47,11 @@ function Application() {
         </Route>
 
         <Route path="/dashboard">
-          {user ? <Dashboard /> : <Redirect to="/"/>}
+          {user ? <Dashboard /> : <Redirect to="/" />}
+        </Route>
+
+        <Route path="/payment">
+          <MakePayment />
         </Route>
 
       </Switch>

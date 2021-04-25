@@ -201,12 +201,7 @@ const Dashboard = () => {
       <div className="sidenav">
         <div id="dropdownToggle" className="profile-dropdown noselect">
           <div className="profile-picture"></div>
-          <div>{displayName}<i className="fa fa-caret-down profiledown-icon"></i>
-            <div id="profileDropdown" className="profile-dropdown-cont">
-              <a href="/settings">Settings</a>
-              <a href="/logout">Log out</a>
-            </div>
-          </div>
+          <div>{displayName}</div>
         </div>
 
         <div className="sidenav-list">

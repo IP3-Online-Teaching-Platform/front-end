@@ -28,7 +28,6 @@ const TextChat = () => {
             sortedUsernames.push(usernameToMessage);
             sortedUsernames.push(auth.currentUser.displayName);
         }
-        console.log(sortedUsernames, sortedUsers);
 
         let docname = sortedUsers.join('|');
 
@@ -45,7 +44,7 @@ const TextChat = () => {
                 },
                 users: sortedUsers,
                 usernames: sortedUsernames,
-                created: docData.created
+                created: docData ? docData.created : moment().unix() * 1000
             }
         )
 
@@ -78,7 +77,7 @@ const TextChat = () => {
             }
 
             let allSortedChats = allChats.sort((a, b) => {
-                return a.recentMessage.timestamp - b.recentMessage.timestamp;
+                return b.recentMessage.timestamp - a.recentMessage.timestamp;
             })
 
             setSortedChats(allSortedChats);
@@ -88,7 +87,10 @@ const TextChat = () => {
                     {allChats.map(chat => (
                         <div className="chat-contact" onClick={(event) => { getRealTimeMessages(event, chat.users[0] === auth.currentUser.uid ? chat.users[1] : chat.users[0], chat.othername) }}>
                             <div className='chat-contact-name'>{chat.othername}</div>
-                            <div className='chat-contact-preview'>{chat.recentMessage.length > 25 ? chat.recentMessage.content.substring(0, 25) + "..." : chat.recentMessage.content}</div>
+                            <div className='chat-contact-preview'>
+                                <div className='chat-contact-preview-message'>{chat.recentMessage.length > 20 ? chat.recentMessage.content.substring(0, 20) + "..." : chat.recentMessage.content} </div>
+                                <div className='chat-contact-preview-message-time'>{moment(chat.recentMessage.timestamp).format('DD/MM/YY HH:mm')}</div>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -165,10 +167,8 @@ const TextChat = () => {
     }
 
     const onChangeHandler = (event) => {
-        const { name, value } = event.currentTarget;
-        if (name === "msgcontent") {
-            setMsgContent(value);
-        }
+        const { value } = event.currentTarget;
+        setMsgContent(value);
     };
 
     return (

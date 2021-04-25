@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { db } from '../Auth/Firebase-Auth';
+import { auth, db } from '../Auth/Firebase-Auth';
 import { searchTutors } from '../Auth/API';
+import moment from 'moment';
+
 
 const TutorSearch = () => {
 
-    const [searchTopic, setSearchTopic] = useState('')
-    const [tutorDisplay, setTutorDisplay] = useState('')
-    const [tutorDetailsUID, setTutorDetailsUID] = useState('')
+    const [searchTopic, setSearchTopic] = useState('');
+    const [tutorDisplay, setTutorDisplay] = useState('');
+    const [tutorDetailsHTML, setTutorDetailsHTML] = useState('');
 
     const handleSubjectSearch = async (event) => {
         event.preventDefault();
@@ -27,7 +29,7 @@ const TutorSearch = () => {
         const { value } = event.currentTarget;
         setSearchTopic(value);
     }
-    
+
     const buildTutorDisplayHTML = async (tutors) => {
         let html = undefined
 
@@ -71,9 +73,116 @@ const TutorSearch = () => {
         setTutorDisplay(html);
     }
 
-    const handleDisplayTutorDetails = (event) => {
+    const handleSendMessage = async (event, tUID, tName) => {
         event.preventDefault();
-        setTutorDetailsUID(event.currentTarget.getAttribute('value'));
+
+        const userToMessage = tUID;
+        const usernameToMessage = tName;
+        const msgContent = document.getElementById('tutor-chat-message-content').value;
+
+        if (!userToMessage) {
+            return console.log('No user to message found');
+        }
+
+        if(msgContent.length === 0){
+            return console.log('No message to send')
+        }
+
+        let sortedUsers = [auth.currentUser.uid, userToMessage].sort()
+        let sortedUsernames = []
+        if (sortedUsers[0] === auth.currentUser.uid) {
+            sortedUsernames.push(auth.currentUser.displayName);
+            sortedUsernames.push(usernameToMessage);
+        } else {
+            sortedUsernames.push(usernameToMessage);
+            sortedUsernames.push(auth.currentUser.displayName);
+        }
+
+        let docname = sortedUsers.join('|');
+
+        const docRef = db.collection('conversations').doc(docname);
+        const doc = await docRef.get();
+        const docData = doc.data();
+
+        db.collection('conversations').doc(docname).set(
+            {
+                recentMessage: {
+                    timestamp: moment().unix() * 1000,
+                    content: msgContent,
+                    author: auth.currentUser.uid
+                },
+                users: sortedUsers,
+                usernames: sortedUsernames,
+                created: docData ? docData.created : moment().unix() * 1000
+            }
+        )
+
+        db.collection('conversations').doc(docname).collection('messages').add(
+            {
+                timestamp: moment().unix() * 1000,
+                content: msgContent,
+                author: auth.currentUser.uid
+            }
+        )
+        document.getElementById('tutor-chat-message-content').value = "";
+        document.getElementById('tutor-chat-message-content').placeholder = "Your message has been sent! Check your inbox for replies!";
+
+    }
+
+    const handleDisplayTutorDetails = async (event) => {
+        event.preventDefault();
+        const tutorUID = event.currentTarget.getAttribute('value');
+        let tutorData = await searchTutors([tutorUID]);
+
+        let tutorRef = await db.collection('tutors').doc(tutorUID).get();
+        let modules = tutorRef.data();
+        modules = modules.modules;
+        tutorData[0].modules = modules;
+
+        const tutorName = tutorData[0].first_name + " " +tutorData[0].last_name
+
+        const tutorDisplayHTML = (
+                <div id="tutorDetails" className="tutor-details-container">
+                    <div className="tutor-details-name-picture">
+                        <div className="tutor-picture">
+                        </div>
+                        <div className="tutor-details-name">{`${tutorName}`}</div>
+                        <a href={`mailto:${tutorData[0].email}`} className="tutor-email">{tutorData[0].email}</a>
+                        <div className="tutor-contact-container">
+                            <div className="tutor-contact-button">
+                                <div onClick={(event) => { event.preventDefault(); window.open('https://connectedtutorvideochat.herokuapp.com/'); }}><i className="fas fa-phone sidenav-list-icon"></i>Call</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="tutor-details">
+                        <div className="tabs-container">
+                            <div className="tab tab-active"><span className="tab-text tab-text-active">Overview</span></div>
+                        </div>
+                        <div className="tutor-age-container">
+                            <div className="tutor-detail">Subjects:</div>
+                            <div className="tutor-education-actual">
+                            {
+                                tutorData[0].modules.map(subject => (
+                                    <div className="tutor-actual">{subject}</div>
+                                ))
+                            }
+                            </div>
+                        </div>
+                        <div className="chat-typing">
+                            <input type="text" id="tutor-chat-message-content" className="chat-input" name="msgContent" />
+                            <div className="chat-buttons-container">
+                                <div className="chat-buttons"></div>
+                            <div className="chat-attachments">
+                                <i className="fas fa-phone sidenav-list-icon" onClick={() => window.open('https://connectedtutorvideochat.herokuapp.com/')}></i>
+                                <i className="fas fa-paper-plane input-send" onClick={(event) => { handleSendMessage(event, tutorUID, tutorName) }}></i>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+        );
+        setTutorDetailsHTML(tutorDisplayHTML);
     }
 
     return (
@@ -90,56 +199,13 @@ const TutorSearch = () => {
                 </div>
             </div>
             <div className="tutors-details-container-main">
-
+                {
+                tutorDetailsHTML? tutorDetailsHTML : 
                 <div id="clickGuide" className="click-on-tutor">
                     <div className="click-tutor-image"></div>
                     <p>Click a tutor to see their full details</p>
                 </div>
-                <div id="tutorDetails" className="tutor-details-container">
-                    <div className="tutor-details-name-picture">
-                        <div className="tutor-picture">
-                        </div>
-                        <div className="tutor-details-name">Mark McCane</div>
-                        <a href="mailto:mark.mccane@gmail.com" className="tutor-email">mark.mccane@gmail.com</a>
-                        <div className="tutor-contact-container">
-                            <div className="tutor-add-button">
-                                <a href="/add"><i className="far fa-plus-square sidenav-list-icon"></i>Add</a>
-                            </div>
-                            <div className="tutor-contact-button">
-                                <a href="/contact"><i className="far fa-envelope sidenav-list-icon"></i>Contact</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="tutor-details">
-                        <div className="tabs-container">
-                            <div className="tab tab-active"><span className="tab-text tab-text-active">Overview</span></div>
-                        </div>
-                        <div className="tutor-age-container">
-                            <div className="tutor-detail">Age:</div>
-                            <div className="tutor-actual">58</div>
-                        </div>
-                        <div className="tutor-age-container">
-                            <div className="tutor-detail">Education:</div>
-                            <div className="tutor-education-actual">
-                                <div className="tutor-actual">BSc(Hons) Computing, Glasgow Caledonian University</div>
-                                <div className="tutor-actual">MSc Artificial Intelligence, Glasgow University</div>
-                            </div>
-                        </div>
-                        <div className="tutor-age-container">
-                            <div className="tutor-detail">Work history:</div>
-                            <div className="tuor-education-actual">
-                                <div className="tutor-actual">2005-2010: Lecturer at Glasgow Caledonian University</div>
-                                <div className="tutor-actual">2010-2015: Lecturer at Glasgow University</div>
-                                <div className="tutor-actual">2015-now: Lecturer at University of Strathclyde</div>
-                            </div>
-                        </div>
-                        <div className="tutor-age-container">
-                            <div className="tutor-detail">Description:</div>
-                            <div className="tutor-actual">"I am very passionate about Artificial Intelligence, especially picture analysis. If you're interested in that, please contact me."</div>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     )

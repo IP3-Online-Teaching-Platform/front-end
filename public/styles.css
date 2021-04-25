@@ -1254,7 +1254,7 @@ body {
 }
 
 .chat-container {
-  width: 80%;
+  width: 65%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -1273,7 +1273,6 @@ body {
   overflow-y: auto;
 
 }
-
 
 .message-one {
   display: flex;

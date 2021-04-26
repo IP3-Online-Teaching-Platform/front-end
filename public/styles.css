@@ -711,6 +711,11 @@ body {
   height: 100%;
 }
 
+.dashboard-main-page {
+  width: 100%;
+  text-align: center;
+}
+
 .tutors-container {
   width: 100VW;
   height: 100VH;
@@ -1757,20 +1762,19 @@ ul {
 }
 .chat-contact-preview {
   display: flex;
-  padding-top: 3px;
 }
 
 .chat-contact-preview-message {
-  flex: 0.6;
+  flex: 0.73;
+  padding-top: 8px;
 }
 .chat-contact-preview-message-time {
-  flex:0.4;
+  flex:0.36;
   font-size:medium;
   text-align: right;
-  margin-right: 3px;
-  margin-top: 3px;
-  font-size: 12px;
-  padding-top: 5px;
+  font-size: 11px;
+  padding-top: 14px;
+  padding-right: 3px;
 }
 
 .chat-display {
@@ -1879,4 +1883,27 @@ ul {
   justify-content: flex-start;
   align-items: center;
   border-bottom: 1px solid rgba(100, 76, 132, 0.6);
+}
+
+.payment-form-submit-button {
+  width: 20%;
+  background-color:#6493ee;
+  color:white;
+  height: 45px;
+  line-height: 45px;
+  font-size: 16px;
+  text-align: center;
+  border: 0;
+  margin-top: 20px;
+}
+
+.payment-form-container {
+  width: 100%;
+  text-align: center;
+  margin: auto;
+}
+
+.payment-form-display {
+  width: 50%;
+  margin-left: 25%;
 }

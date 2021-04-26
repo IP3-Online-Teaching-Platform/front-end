@@ -88,7 +88,7 @@ const TextChat = () => {
                         <div className="chat-contact" onClick={(event) => { getRealTimeMessages(event, chat.users[0] === auth.currentUser.uid ? chat.users[1] : chat.users[0], chat.othername) }}>
                             <div className='chat-contact-name'>{chat.othername}</div>
                             <div className='chat-contact-preview'>
-                                <div className='chat-contact-preview-message'>{chat.recentMessage.length > 20 ? chat.recentMessage.content.substring(0, 20) + "..." : chat.recentMessage.content} </div>
+                                <div className='chat-contact-preview-message'>{chat.recentMessage.content.length > 20 ? chat.recentMessage.content.substring(0, 20) + "..." : chat.recentMessage.content} </div>
                                 <div className='chat-contact-preview-message-time'>{moment(chat.recentMessage.timestamp).format('DD/MM/YY HH:mm')}</div>
                             </div>
                         </div>

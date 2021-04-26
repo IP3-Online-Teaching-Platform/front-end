@@ -60,16 +60,16 @@ export default function PaymentForm() {
     return (
         <>
         {!success ?
-        <form onSubmit={handleSubmit}>
-            <fieldset className="FormGroup">
-                <div className="FormRow">
-                    <CardElement options={CARD_OPTIONS}/>
-                </div>
-            </fieldset>
-            <div id="wrapper">
-                <button>Make Payment</button>
-            </div>
-        </form>
+        <div className="payment-form-container">
+            <form className="payment-form-display" onSubmit={handleSubmit}>
+                <fieldset className="FormGroup">
+                    <div className="FormRow">
+                        <CardElement options={CARD_OPTIONS}/>
+                    </div>
+                </fieldset>
+                <button className="payment-form-submit-button">Make Payment</button>
+            </form>
+        </div>
         :
         <div>
             <h2>Payment Completed</h2>

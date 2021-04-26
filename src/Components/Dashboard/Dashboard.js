@@ -5,6 +5,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import TextChat from '../TextChat/TextChat';
 import TutorSearch from '../TutorSearch/TutorSearch'
 import { getStudent, getTutor } from '../Auth/API';
+import MakePayment from '../Payment/MakePayment';
 
 const Dashboard = () => {
   const user = useContext(UserContext);
@@ -210,14 +211,14 @@ const Dashboard = () => {
               <i className="fas fa-user-tie sidenav-list-icon"></i>Tutors
               </Tab>
             <Tab className="sidenav-li-item no-bullets">
-              <i className="fas fa-clipboard sidenav-list-icon"></i>Notes
-              </Tab>
-            <Tab className="sidenav-li-item no-bullets">
               <i className="far fa-envelope sidenav-list-icon"></i>Inbox
               </Tab>
             <li className="sidenav-li-item no-bullets"><a href="/" onClick={(event) => { event.preventDefault(); window.open('https://connectedtutorvideochat.herokuapp.com/'); }}>
               <i className="far fa-envelope sidenav-list-icon"></i>Video Chat</a>
             </li>
+            <Tab className="sidenav-li-item no-bullets">
+              <i className="far fa-envelope sidenav-list-icon"></i>Payment
+              </Tab>
           </TabList>
         </div>
         <div className="sidenav-interests">
@@ -242,10 +243,10 @@ const Dashboard = () => {
           <TutorSearch />
         </TabPanel>
         <TabPanel>
-          Notes
-        </TabPanel>
-        <TabPanel className="tutors-container">
           <TextChat />
+        </TabPanel>
+        <TabPanel>
+          <MakePayment />
         </TabPanel>
       </main>
     </Tabs>

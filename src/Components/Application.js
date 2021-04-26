@@ -15,16 +15,6 @@ function Application() {
 
   return (
     <BrowserRouter>
-
-      {/*<nav>
-          <ul>
-            <li className='signup'><Link to='/signup' className='signup'>Sign Up</Link></li>
-            <li><Link to='/login'>Log In</Link></li>
-            <li><Link to='/'>Contact Us</Link></li>
-            <li><Link to='/'>About Us</Link></li>
-            <li className='nav-li-float-left'><Link to='/'>E-Learner</Link></li>
-          </ul>
-        </nav>*/}
       <Switch>
         <Route exact path="/">
           {user ? <Redirect to="/dashboard" /> : <Home />}

@@ -61,13 +61,16 @@ export default function PaymentForm() {
         <>
         {!success ?
         <div className="payment-form-container">
-            <form className="payment-form-display" onSubmit={handleSubmit}>
+            <form className="payment-form-display" onSubmit={handleSubmit} style={{textAlign: 'center'}}>
                 <fieldset className="FormGroup">
                     <div className="FormRow">
                         <CardElement options={CARD_OPTIONS}/>
                     </div>
                 </fieldset>
-                <button className="payment-form-submit-button">Make Payment</button>
+                <div>
+                    <button className="payment-form-submit-button" style={{marginRight: '3px'}}>Make Payment</button>
+                    <button className="payment-form-submit-button" onClick={() => {window.location.href = '/dashboard'}} style={{marginLeft: '3px'}}>Home</button> 
+                </div> 
             </form>
         </div>
         :

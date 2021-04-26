@@ -149,6 +149,9 @@ const TutorSearch = () => {
                         <div className="tutor-details-name">{`${tutorName}`}</div>
                         <a href={`mailto:${tutorData[0].email}`} className="tutor-email">{tutorData[0].email}</a>
                         <div className="tutor-contact-container">
+                            <div className="tutor-add-button">
+                            <a href="/payment"><i class="fas fa-money-bill-wave-alt sidenav-list-icon"></i>Pay</a>
+                            </div>
                             <div className="tutor-contact-button">
                                 <div onClick={(event) => { event.preventDefault(); window.open('https://connectedtutorvideochat.herokuapp.com/'); }}><i className="fas fa-phone sidenav-list-icon"></i>Call</div>
                             </div>
@@ -172,9 +175,11 @@ const TutorSearch = () => {
                         <div className="chat-typing">
                             <input type="text" id="tutor-chat-message-content" className="chat-input" name="msgContent" />
                             <div className="chat-buttons-container">
-                                <div className="chat-buttons"></div>
+                                <div className="chat-buttons">
+                                    <a href="/payment"><i class="fas fa-money-bill-wave-alt input-icon"></i></a>
+                                </div>
                             <div className="chat-attachments">
-                                <i className="fas fa-phone sidenav-list-icon" onClick={() => window.open('https://connectedtutorvideochat.herokuapp.com/')}></i>
+                            <i className="fas fa-video input-send" onClick={() => window.open('https://connectedtutorvideochat.herokuapp.com/')}></i>
                                 <i className="fas fa-paper-plane input-send" onClick={(event) => { handleSendMessage(event, tutorUID, tutorName) }}></i>
                             </div>
                         </div>

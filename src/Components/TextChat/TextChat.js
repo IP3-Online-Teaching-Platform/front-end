@@ -187,9 +187,10 @@ const TextChat = () => {
                     <textarea type="text" className="chat-input" name="msgcontent" placeholder={`Message ${usernameToMessage.split(' ')[0]}`} value={msgcontent} onChange={(event) => onChangeHandler(event)} />
                     <div className="chat-buttons-container">
                         <div className="chat-buttons">
+                            <a href="/payment"><i class="fas fa-money-bill-wave-alt sidenav-list-icon"></i></a>
                         </div>
                         <div className="chat-attachments">
-                            <i className="fas fa-phone sidenav-list-icon" onClick={() => window.open('https://connectedtutorvideochat.herokuapp.com/')}></i>
+                            <i className="fas fa-video input-send" onClick={() => window.open('https://connectedtutorvideochat.herokuapp.com/')}></i>
                             <i className="fas fa-paper-plane input-send" onClick={(event) => { handleSendMessage(event) }}></i>
                         </div>
                     </div>

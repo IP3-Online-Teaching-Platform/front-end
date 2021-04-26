@@ -725,7 +725,7 @@ body {
 }
 
 .results-container {
-  width: 50%;
+  width: 40%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -905,7 +905,7 @@ body {
 
 .tutors-details-container-main {
   height: 100%;
-  width: 40%;
+  width: 47.7%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1864,6 +1864,7 @@ ul {
     background-color: rgb(245, 245, 255);
     border-color: rgba(100, 76, 132, 0.6);
     position: absolute;
+    text-align: left;
 }
 
 .chat-list-container {

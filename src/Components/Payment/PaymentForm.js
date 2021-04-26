@@ -68,7 +68,7 @@ export default function PaymentForm() {
                     </div>
                 </fieldset>
                 <div>
-                    <button className="payment-form-submit-button" style={{marginRight: '3px'}}>Make Payment</button>
+                    <button className="payment-form-submit-button" style={{marginRight: '3px'}} onClick={event => handleSubmit(event)}>Make Payment</button>
                     <button className="payment-form-submit-button" onClick={() => {window.location.href = '/dashboard'}} style={{marginLeft: '3px'}}>Home</button> 
                 </div> 
             </form>
